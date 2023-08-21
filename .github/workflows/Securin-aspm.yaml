@@ -11,16 +11,16 @@ on:
 jobs:
   scanning:
     env:
-      APP_ID: c2e7f5df1c2175f257fc711d2e5035a9ac3bc26c3484b91cdaf34c3f7e300dcd
+      APP_ID: 53ff0d491685bdad39b00142f0193bc74e67220621d696e2a84b79a53ee9a7d6
       BRANCH_NAME: main
-      SCAN_ID: 9545355aaa7772e5e8eeac47a981d54d5f8c740c8bd87e13244d37c24fe149ba
-      REQ_URL_MAP: "${{toJSON('{\"SL_RESULT_API_HOST\":\"https://a5c1-103-213-1-241.ngrok.io/resultapi\"\
-        ,\"SL_RESULTPARSER_API_HOST\":\"https://f856-103-213-1-241.ngrok.io/resultparserapi\"\
+      SCAN_ID: 145b9cbbbe468154811ef386db3f0926edf444941fa0a764ce6c99daef8d7f9c
+      REQ_URL_MAP: "${{toJSON('{\"SL_RESULT_API_HOST\":\"https://slresultapi.qa.securin.io/resultapi\"\
+        ,\"SL_RESULTPARSER_API_HOST\":\"https://slresultparserapi.qa.securin.io/resultparserapi\"\
         }')}}"
     steps:
     - name: Retrieve Token Info
       id: auth_token
-      run: "respJson=$(curl --location --request GET 'https://a5c1-103-213-1-241.ngrok.io/resultapi/aws/ecr/token'\
+      run: "respJson=$(curl --location --request GET 'https://slresultapi.qa.securin.io/resultapi/aws/ecr/token'\
         \  --header 'Authorization: Bearer ${{secrets.CLI_ACCESS_TOKEN}}'  --data-raw\
         \ ' ' ) \necho \"authTokenJson=$respJson\" >> $GITHUB_OUTPUT"
     - uses: actions/checkout@v3
@@ -40,7 +40,7 @@ jobs:
         \ $usrImgTag -access_tkn ${{secrets.CLI_ACCESS_TOKEN}} -app_id ${{ env.APP_ID\
         \ }} -scan_id ${{ env.SCAN_ID }} -branch_name ${{ env.BRANCH_NAME }} -req_url_map\
         \ ${{ env.REQ_URL_MAP }} -tool_name github event:${{ github.event_name }}\
-        \  pr_number:${{ github.event.number }}"
+        \  pr_number:${{ github.event.number }} -upload_log true"
     - name: Upload SARIF file
       uses: github/codeql-action/upload-sarif@v2
       with:
